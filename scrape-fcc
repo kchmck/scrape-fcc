@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+
+import argparse
+import itertools
+import sqlite3
+
+import asr
+import record
+import sql
+import uls
+
+db = sqlite3.connect("records.db")
+cursor = db.cursor()
+
+cursor.executescript(sql.CREATE)
+cursor.executescript(sql.INIT)
+db.commit()
+
+ap = argparse.ArgumentParser()
+ap.add_argument("-I", "--ids", action="store_true", help="scrape ULS IDs")
+ap.add_argument("-A", "--asr", action="store_true", help="scrape ASR records")
+ap.add_argument("-U", "--uls", action="store_true", help="update ULS records")
+ap.add_argument("-S", "--state", help="state to scrape")
+ap.add_argument("-C", "--county", help="county in state to scrape")
+ap.add_argument("--last-record", nargs="?", type=int, default=0)
+args = ap.parse_args()
+
+state = args.state.upper()
+county = args.county.upper()
+
+def scrape_uls_ids():
+    for rkey in uls.ULSRecords(state, county):
+        cursor.execute(
+            "select rkey from ulsIDs where rkey = ?",
+            (
+                rkey,
+            )
+        )
+
+        if cursor.fetchone() is not None:
+            continue
+
+        cursor.execute(
+            """
+            insert into ulsIDs values (
+                ?
+            )
+            """,
+            (
+                rkey,
+            )
+        )
+
+        print("added {}".format(rkey))
+
+def scrape_uls():
+    cursor.execute(
+        "select rkey from ulsIDs where rkey >= ? order by rkey",
+        (
+            args.last_record,
+        )
+    )
+
+    # Save these here so we can use the cursor to insert without invalidating
+    # it.
+    rkeys = [r[0] for r in cursor]
+
+    for rkey in rkeys:
+        print("record {}".format(rkey))
+
+        cursor.execute(
+            "select rkey from records where rkey = ?",
+            (
+                rkey,
+            )
+        )
+
+        if cursor.fetchone() is not None:
+            print("  skipping")
+            continue
+
+        rec = record.Record(rkey)
+
+        if not rec:
+            print("  invalid")
+            continue
+
+        if rec.status != "active":
+            print("  inactive")
+            continue
+
+        rec.insert(cursor)
+
+        for loc in rec.locs():
+            loc.insert(cursor)
+
+        for freq in rec.freqs():
+            freq.insert(cursor)
+
+            for em in freq.emissions():
+                em.insert(cursor)
+
+        db.commit()
+
+        print("  scraped {}".format(rec.callsign))
+
+def scrape_asr():
+    for tkey, lat, long in asr.ASRTowers(state, county):
+        cursor.execute(
+            "select tkey from towers where tkey = ?",
+            (
+                tkey,
+            )
+        )
+
+        if cursor.fetchone() is not None:
+            continue
+
+        cursor.execute(
+            """
+            insert into towers values (
+                ?,
+                ?,
+                ?
+            )
+            """,
+            (
+                tkey,
+                lat,
+                long,
+            )
+        )
+
+        print("added {}".format(tkey))
+
+if args.ids:
+    scrape_uls_ids()
+
+if args.uls:
+    scrape_uls()
+
+if args.asr:
+    scrape_asr()
