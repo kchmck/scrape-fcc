@@ -33,19 +33,12 @@ class ASRLatLongParser:
 
 class Table:
     def __init__(self, node):
-        self.rows = node.find_all("tr")
-
-    def find(self, regex):
-        for row in self.rows:
-            cols = row.find_all("td")
-
-            for i in range(len(cols)):
-                if re.search(regex, cols[i].text):
-                    yield cols[i+1]
+        self.cols = node.find_all("td")
 
     def __getitem__(self, regex):
-        for col in self.find(regex):
-            return col
+        for col, val in zip(self.cols, self.cols[1:]):
+            if re.search(regex, col.text):
+                return val
 
 class ColMap:
     def __init__(self, heading):

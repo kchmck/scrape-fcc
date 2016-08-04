@@ -17,7 +17,8 @@ CREATE = """
         title text not null,
         callsign text not null,
         status text not null,
-        service text not null
+        service text not null,
+        eligibility text
     ) without rowid;
 
     create table if not exists locations (

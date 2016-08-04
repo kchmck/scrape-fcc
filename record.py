@@ -24,12 +24,21 @@ class Record:
 
         self.rkey = rkey
         self.title = title
+        self.soup = soup
         self.callsign = table["Call Sign"].text.strip()
         self.service = table["Radio Service"].text.strip()[:2]
         self.status = table["Status"].text.strip().lower()
 
     def __bool__(self):
         return not self.service in INVALID
+
+    def eligibility(self):
+        try:
+            table = utils.Table(self.soup.select("table[summary~=Land]")[0])
+        except IndexError:
+            return None
+
+        return utils.clean(table["Eligibility"].text.strip())
 
     def locs(self):
         return location.DefaultLocations(self.rkey)
@@ -45,6 +54,7 @@ class Record:
                 ?,
                 ?,
                 ?,
+                ?,
                 ?
             )
             """,
@@ -54,5 +64,6 @@ class Record:
                 self.callsign,
                 self.status,
                 self.service,
+                self.eligibility(),
             )
         )
