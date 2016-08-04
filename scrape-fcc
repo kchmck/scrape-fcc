@@ -9,13 +9,6 @@ import record
 import sql
 import uls
 
-db = sqlite3.connect("records.db")
-cursor = db.cursor()
-
-cursor.executescript(sql.CREATE)
-cursor.executescript(sql.INIT)
-db.commit()
-
 ap = argparse.ArgumentParser()
 ap.add_argument("-I", "--ids", action="store_true", help="scrape ULS IDs")
 ap.add_argument("-A", "--asr", action="store_true", help="scrape ASR records")
@@ -23,10 +16,18 @@ ap.add_argument("-U", "--uls", action="store_true", help="update ULS records")
 ap.add_argument("-S", "--state", help="state to scrape")
 ap.add_argument("-C", "--county", help="county in state to scrape")
 ap.add_argument("--last-record", nargs="?", type=int, default=0)
+ap.add_argument("-d", "--db", help="sqlite database to use")
 args = ap.parse_args()
 
 state = args.state.upper()
 county = args.county.upper()
+
+db = sqlite3.connect(args.db)
+cursor = db.cursor()
+
+cursor.executescript(sql.CREATE)
+cursor.executescript(sql.INIT)
+db.commit()
 
 def scrape_uls_ids():
     for rkey in uls.ULSRecords(state, county):
