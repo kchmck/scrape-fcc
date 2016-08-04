@@ -10,14 +10,10 @@ INVALID = [
     "CN", "WS", "CW", "YD", "BC", "AW", "WU", "CZ", "QA", "TC", "AD", "BR",
     "ED", "PC", "LS", "YC", "YH", "TN", "WX", "MS", "CP", "WZ", "CJ", "BB",
     "BA", "WY", "CY", "GC", "AH", "TP", "CT",
+
+    # These parse correctly, but are microwave so not really useful
+    "CF", "MG", "MW", "NN", "PA", "RS", "TI", "TS", "AS", "CE", "AI", "LD",
 ]
-
-LOCS = {}
-
-LOCS["NN"] = location.NNLocations
-
-for i in ["MG", "TS", "TI", "CF", "AS", "MW", "CE", "AI"]:
-    LOCS[i] = location.PTPLocations
 
 class Record:
     def __init__(self, rkey):
@@ -36,10 +32,7 @@ class Record:
         return not self.service in INVALID
 
     def locs(self):
-        try:
-            return LOCS[self.service](self.rkey)
-        except KeyError:
-            return location.DefaultLocations(self.rkey)
+        return location.DefaultLocations(self.rkey)
 
     def freqs(self):
         return freq.Frequencies(self.rkey)
