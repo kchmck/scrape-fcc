@@ -52,6 +52,8 @@ def scrape_uls_ids():
             )
         )
 
+        db.commit()
+
         print("added {}".format(rkey))
 
 def scrape_uls():
@@ -131,6 +133,8 @@ def scrape_asr():
                 long,
             )
         )
+
+        db.commit()
 
         print("added {}".format(tkey))
 
