@@ -30,31 +30,24 @@ cursor.executescript(sql.INIT)
 db.commit()
 
 def scrape_uls_ids():
-    for rkey in uls.ULSRecords(state, county):
+    for rec in uls.ULSRecords(state, county):
         cursor.execute(
             "select rkey from ulsIDs where rkey = ?",
             (
-                rkey,
+                rec.rkey,
             )
         )
+
+        print("record {}".format(rec.rkey))
 
         if cursor.fetchone() is not None:
+            print("  skipping")
             continue
 
-        cursor.execute(
-            """
-            insert into ulsIDs values (
-                ?
-            )
-            """,
-            (
-                rkey,
-            )
-        )
-
+        rec.insert(cursor)
         db.commit()
 
-        print("added {}".format(rkey))
+        print("  added")
 
 def scrape_uls():
     cursor.execute(

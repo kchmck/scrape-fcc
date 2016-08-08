@@ -9,7 +9,9 @@ DELETE = """
 
 CREATE = """
     create table if not exists ulsIDs (
-        rkey integer primary key
+        rkey integer primary key,
+        service text not null,
+        status text not null
     );
 
     create table if not exists records (

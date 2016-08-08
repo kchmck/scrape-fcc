@@ -32,8 +32,10 @@ class ULSRecords:
             for row in table.select("tr")[1:-1]:
                 cells = row.find_all("td")
                 link = cells[1].find_all("a")[0]
+                service = cells[4].text.strip()
+                status = cells[5].text.strip().lower()
 
-                yield parse_url(link["href"])
+                yield ULSRecord(parse_url(link["href"]), service, status)
 
             try:
                 next = soup.select("[title~=Next]")[0]
@@ -42,6 +44,28 @@ class ULSRecords:
 
             req = requests.get("/".join((urls.SEARCH, next["href"])),
                 headers=headers)
+
+class ULSRecord:
+    def __init__(self, rkey, service, status):
+        self.rkey = rkey
+        self.service = service
+        self.status = status
+
+    def insert(self, cursor):
+        cursor.execute(
+            """
+            insert into ulsIDs values (
+                ?,
+                ?,
+                ?
+            )
+            """,
+            (
+                self.rkey,
+                self.service,
+                self.status,
+            )
+        )
 
 def parse_url(str):
     parts = urllib.parse.urlparse(str)
