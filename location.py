@@ -46,7 +46,7 @@ class DefaultLocation:
         self.type = parse_type(loc.text.strip())
         self.desc = cols[map["Transmitter Address"]].text.strip()
 
-        coords = utils.LatLongParser(
+        coords = utils.ULSLatLongParser(
             cols[map["Latitude, Longitude"]].text.strip())
         self.latitude = coords.lat
         self.longitude = coords.long

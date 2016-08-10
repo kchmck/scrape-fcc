@@ -12,7 +12,7 @@ def dms_to_dec(dms, card):
     deg, min, sec = (float(n) for n in dms.split("-"))
     return SIGNS[card] * (deg + min / 60 + sec / 3600)
 
-class LatLongParser:
+class ULSLatLongParser:
     def __init__(self, str):
         lat, long = str.split(", ")
         self.lat = self.parse(lat)
