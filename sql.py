@@ -1,6 +1,6 @@
 DELETE = """
-    drop table if exists ulsIDs;
     drop table if exists records;
+    drop table if exists recordDetails;
     drop table if exists locations;
     drop table if exists frequencies;
     drop table if exists emissions;
@@ -8,18 +8,16 @@ DELETE = """
 """
 
 CREATE = """
-    create table if not exists ulsIDs (
-        rkey integer primary key,
-        service text not null,
-        status text not null
-    );
-
     create table if not exists records (
         rkey integer primary key not null,
+        service text not null,
+        status text not null
+    ) without rowid;
+
+    create table if not exists recordDetails (
+        rkey integer primary key references records not null,
         title text not null,
         callsign text not null,
-        status text not null,
-        service text not null,
         eligibility text
     ) without rowid;
 

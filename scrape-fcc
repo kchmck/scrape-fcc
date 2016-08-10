@@ -32,7 +32,7 @@ db.commit()
 def scrape_uls_ids():
     for rec in uls.ULSRecords(state, county):
         cursor.execute(
-            "select rkey from ulsIDs where rkey = ?",
+            "select rkey from records where rkey = ?",
             (
                 rec.rkey,
             )
@@ -51,7 +51,7 @@ def scrape_uls_ids():
 
 def scrape_uls():
     cursor.execute(
-        "select rkey from ulsIDs where rkey >= ? order by rkey",
+        "select rkey from records where rkey >= ? order by rkey",
         (
             args.last_record,
         )
@@ -65,7 +65,7 @@ def scrape_uls():
         print("record {}".format(rkey))
 
         cursor.execute(
-            "select rkey from records where rkey = ?",
+            "select rkey from recordDetails where rkey = ?",
             (
                 rkey,
             )

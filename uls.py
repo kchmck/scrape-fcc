@@ -54,7 +54,7 @@ class ULSRecord:
     def insert(self, cursor):
         cursor.execute(
             """
-            insert into ulsIDs values (
+            insert into records values (
                 ?,
                 ?,
                 ?

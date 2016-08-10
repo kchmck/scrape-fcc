@@ -49,9 +49,7 @@ class Record:
     def insert(self, cursor):
         cursor.execute(
             """
-            insert into records values (
-                ?,
-                ?,
+            insert into recordDetails values (
                 ?,
                 ?,
                 ?,
@@ -62,8 +60,6 @@ class Record:
                 self.rkey,
                 self.title,
                 self.callsign,
-                self.status,
-                self.service,
                 self.eligibility(),
             )
         )
