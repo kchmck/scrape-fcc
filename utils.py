@@ -36,8 +36,8 @@ class Table:
         self.cols = node.find_all("td")
 
     def __getitem__(self, regex):
-        for col, val in zip(self.cols, self.cols[1:]):
-            if re.search(regex, col.text):
+        for title, val in zip(self.cols, self.cols[1:]):
+            if re.search(regex, title.text):
                 return val
 
 class ColMap:
