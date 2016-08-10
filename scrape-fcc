@@ -101,35 +101,21 @@ def scrape_uls():
         print("  scraped {}".format(rec.callsign))
 
 def scrape_asr():
-    for tkey, lat, long in asr.ASRTowers(state, county):
+    for tower in asr.ASRTowers(state, county):
         cursor.execute(
             "select tkey from towers where tkey = ?",
             (
-                tkey,
+                tower.tkey,
             )
         )
 
         if cursor.fetchone() is not None:
             continue
 
-        cursor.execute(
-            """
-            insert into towers values (
-                ?,
-                ?,
-                ?
-            )
-            """,
-            (
-                tkey,
-                lat,
-                long,
-            )
-        )
-
+        tower.insert(cursor)
         db.commit()
 
-        print("added {}".format(tkey))
+        print("added {}".format(tower.tkey))
 
 if args.ids:
     scrape_uls_ids()

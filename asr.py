@@ -40,7 +40,7 @@ class ASRTowers:
                 query = urllib.parse.parse_qs(parts.query)
                 coords = utils.ASRLatLongParser(cols[5].text.strip())
 
-                yield query["regKey"][0], coords.lat, coords.long
+                yield ASRTower(query["regKey"][0], coords.lat, coords.long)
 
             try:
                 next = soup.select("a[title~=Next]")[0]["href"]
@@ -48,3 +48,25 @@ class ASRTowers:
                 break
 
             req = requests.get("/".join((urls.ASR_SEARCH, next)), headers=headers)
+
+class ASRTower:
+    def __init__(self, tkey, lat, long):
+        self.tkey = tkey
+        self.lat = lat
+        self.long = long
+
+    def insert(self, cursor):
+        cursor.execute(
+            """
+            insert into towers values (
+                ?,
+                ?,
+                ?
+            )
+            """,
+            (
+                self.tkey,
+                self.lat,
+                self.long,
+            )
+        )
