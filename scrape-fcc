@@ -15,7 +15,8 @@ ap.add_argument("-A", "--asr", action="store_true", help="scrape ASR records")
 ap.add_argument("-U", "--uls", action="store_true", help="update ULS records")
 ap.add_argument("-S", "--state", help="state to scrape")
 ap.add_argument("-C", "--county", help="county in state to scrape")
-ap.add_argument("--last-record", nargs="?", type=int, default=0)
+ap.add_argument("-L", "--last-record", nargs="?", type=int, default=0,
+    help="start scraping from the given record ID")
 ap.add_argument("-d", "--db", help="sqlite database to use")
 args = ap.parse_args()
 
