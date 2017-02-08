@@ -3,24 +3,18 @@
 Using [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) and
 [pip](https://pip.pypa.io/en/stable/installing/),
 
-1. Create a new environment:
-
-    ```sh
-    virtualenv -p python3 scrape-fcc-env
-    cd scrape-fcc-env
-    ```
-
-3. Activate the environment:
-
-    ```sh
-    source bin/activate
-    ```
-
-2. Clone the repo:
+1. Clone the repo:
 
     ```sh
     git clone https://github.com/kchmck/scrape-fcc.git
     cd scrape-fcc
+    ```
+
+2. Create and activate a new environment:
+
+    ```sh
+    virtualenv -p python3 .venv
+    source .venv/bin/activate
     ```
 
 4. Install dependencies:
