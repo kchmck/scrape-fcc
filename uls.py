@@ -12,6 +12,7 @@ class ULSRecords:
 
     def __iter__(self):
         req = requests.get(urls.GEO_SEARCH)
+        req.raise_for_status()
 
         headers = {
             "Cookie": req.headers["set-cookie"],
@@ -24,6 +25,7 @@ class ULSRecords:
             "ulsCounty": utils.county_code(req.text, self.state, self.county),
             "hiddenForm": "hiddenForm",
         })
+        req.raise_for_status()
 
         while True:
             soup = bs4.BeautifulSoup(req.text, "html.parser")
@@ -44,6 +46,7 @@ class ULSRecords:
 
             req = requests.get("/".join((urls.SEARCH, next["href"])),
                 headers=headers)
+            req.raise_for_status()
 
 class ULSRecord:
     def __init__(self, rkey, service, status):

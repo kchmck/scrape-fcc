@@ -12,6 +12,7 @@ class ASRTowers:
 
     def __iter__(self):
         req = requests.get(urls.ASR)
+        req.raise_for_status()
 
         headers = {
             "Cookie": req.headers["set-cookie"],
@@ -24,6 +25,7 @@ class ASRTowers:
             "asr_r_county": utils.county_code(req.text, self.state, self.county),
             "fiExactMatchInd": "N"
         })
+        req.raise_for_status()
 
         while True:
             soup = bs4.BeautifulSoup(req.text, "html.parser")
@@ -48,6 +50,7 @@ class ASRTowers:
                 break
 
             req = requests.get("/".join((urls.ASR_SEARCH, next)), headers=headers)
+            req.raise_for_status()
 
 class ASRTower:
     def __init__(self, tkey, lat, long):

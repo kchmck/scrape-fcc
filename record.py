@@ -18,6 +18,8 @@ INVALID = [
 class Record:
     def __init__(self, rkey):
         req = requests.get(urls.MAIN, params={"licKey": rkey})
+        req.raise_for_status()
+
         soup = bs4.BeautifulSoup(req.text, "html.parser")
         title = soup.select("span[class=h2]")[0].text
         table = utils.Table(soup.select("table[summary~=License]")[0])

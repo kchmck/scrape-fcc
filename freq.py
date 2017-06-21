@@ -11,6 +11,7 @@ class Frequencies:
 
     def __iter__(self):
         req = requests.get(urls.FREQS, params={"licKey": self.rkey})
+        req.raise_for_status()
 
         while True:
             soup = bs4.BeautifulSoup(req.text, "html.parser")
@@ -32,6 +33,7 @@ class Frequencies:
                     return
 
                 req = requests.get("/".join((urls.SEARCH, next[0]["href"])))
+                req.raise_for_status()
             except IndexError:
                 break
 
@@ -95,6 +97,7 @@ class Emissions:
             "licKey": self.rkey,
             "keyFreq": self.fkey,
         })
+        req.raise_for_status()
 
         soup = bs4.BeautifulSoup(req.text, "html.parser")
         cells = soup.findAll(text="FCC Admin Serial Number")

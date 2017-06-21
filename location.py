@@ -12,6 +12,7 @@ class DefaultLocations:
 
     def __iter__(self):
         req = requests.get(urls.LOCS, params={"licKey": self.rkey})
+        req.raise_for_status()
 
         while True:
             soup = bs4.BeautifulSoup(req.text, "html.parser")
@@ -34,6 +35,7 @@ class DefaultLocations:
 
             try:
                 req = requests.get("/".join((urls.SEARCH, next[0]["href"])))
+                req.raise_for_status()
             except IndexError:
                 return
 
