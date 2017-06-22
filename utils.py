@@ -56,7 +56,7 @@ def clean(str):
     return re.sub("\s+", " ", str.strip())
 
 def county_code(text, state, county):
-    return int(re.search('"(\d+):{}-{}"'.format(state, county), text).group(1))
+    return re.search('"(\d+):{}-{}"'.format(state, county), text).group(1)
 
 def parse_fkey(link):
     return int(re.search("keyFreq=(\d+)", link).group(1))
